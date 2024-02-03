@@ -1,31 +1,26 @@
 #!/usr/bin/python3
 """handles configurations"""
 
-from flask import jsonify, request
+from flask import jsonify
 from api.v1.views import app_views
 from models import storage
 
 
-@app_views.route('/status', methods=['GET'], strict_slashes=False)
+@app_views.route('/status', methods=['GET'])
 def get_status():
-    """returns status of the api"""
-    if request.method == 'GET':
-        return jsonify({"status": "OK"})
+    """ Return json string """
+    return jsonify({"status": "OK"})
 
 
 @app_views.route('/stats', methods=['GET'])
-def get_stats():
-    """Retrieves the number of each object type"""
-    if request.method == 'GET':
-        response = {}
-        stats = {
-                "Amenity": "amenities",
-                "City": "cities",
-                "Place": "places",
-                "Review": "reviews",
-                "State": "states",
-                "User": "users"
-        }
-        for key, value in stats.items():
-            response[value] = storage.count()
-        return jsonify(response)
+def obj_count():
+    """ Return the number of each object type per class """
+    obj_dict = {
+                "amenities": storage.count("Amenity"),
+                "cities": storage.count("City"),
+                "places": storage.count("Place"),
+                "reviews": storage.count("Review"),
+                "states": storage.count("State"),
+                "users": storage.count("User")
+                }
+    return jsonify(obj_dict)
